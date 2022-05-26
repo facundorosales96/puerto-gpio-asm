@@ -33,10 +33,29 @@ endfun Pin_init
 .set ODR,0x0C
 .set BSRR,0x10
 .set BRR,0x14
+.set MASCARA_BITS, 0xF
 
 defun Pin_configura
     // R0: self, R1: config
-    bx lr
+    push {R4-R6,LR}
+    ldr R2,[R0,#Pin__puerto]
+    ldr R3,[R0,#Pin__numero]
+    cmp R3,#7
+    bls 0f
+    mov R6,#CRH
+    subs R3,#8
+    b 1f
+0: 
+    mov R6,#CRL
+1:  ldr R4,[R2,R6]
+    lsls R3,#2
+    mov R5,#MASCARA_BITS
+    lsls R5,R3
+    bics R4,R5
+    lsls R1,R3
+    orrs R4,R1
+    str R4,[R2,R6]
+    pop {R4-R6,PC}
 endfun Pin_configura
 
 
