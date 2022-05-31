@@ -37,9 +37,10 @@ endfun Pin_init
 
 defun Pin_configura
     // R0: self, R1: config
-    push {R4-R6,LR}
+    push {R4-R7,LR}
     ldr R2,[R0,#Pin__puerto]
     ldr R3,[R0,#Pin__numero]
+    movs R7,R1
     cmp R3,#7
     bls 0f
     mov R6,#CRH
@@ -52,10 +53,19 @@ defun Pin_configura
     mov R5,#MASCARA_BITS
     lsls R5,R3
     bics R4,R5
+    ands R1,#MASCARA_BITS
     lsls R1,R3
     orrs R4,R1
     str R4,[R2,R6]
-    pop {R4-R6,PC}
+    cmp R7,0b01000
+    bne 1f
+    mov R1,#0
+    bl Pin_escribe
+1:  cmp R7,0b11000
+    bne 1f
+    mov R1,#1
+    bl Pin_escribe
+1:  pop {R4-R7,PC}
 endfun Pin_configura
 
 
