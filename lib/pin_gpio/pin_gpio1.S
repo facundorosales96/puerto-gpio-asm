@@ -68,9 +68,10 @@ defun Pin_escribe
     lsls R0,R3
     cmp R1,#0
     beq 0f
+    str R0,[R2,#BSRR]
+    b 1f
 0:  str R0,[R2,#BRR]
-
-    bx lr
+1:  bx lr
 endfun Pin_escribe
 
 defun Pin_lee
